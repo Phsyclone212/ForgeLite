@@ -10,15 +10,37 @@ public class ForgePanel extends JPanel {
     private JButton mineBtn = new JButton("Mine"),
         smeltBtn = new JButton("Smelt"),
         forgeBtn = new JButton("Forge");
+    private CanvasPanel canvasPanel = new CanvasPanel();
+
+    private Timer forgeTimer;
 
     private int ore = 0, ingot = 0, xp = 0;
+    private boolean isForging = false;
+    private int forgeProgress = 0;
 
     public ForgePanel() {
+
+        forgeTimer = new Timer(50, e -> {
+            //increment forgeProgress
+            forgeProgress += 1;
+            //push to CanvasPanel
+            canvasPanel.setForgeProgress(forgeProgress);
+            //when progress >= 100 stop and complete
+            if(forgeProgress >= 100){
+                forgeTimer.stop();
+                forgeProgress = 0;
+                canvasPanel.setForgeProgress(0);
+                ingot--;
+                xp += 10;
+                canvasPanel.setXp(xp);
+                isForging = false;
+                status.setText("Sword complete! +10xp ");
+            }
+        });
 
         this.setLayout(new BorderLayout());
         this.add(status, BorderLayout.NORTH);
 
-        JPanel canvasPanel = new JPanel();
         this.add(canvasPanel, BorderLayout.CENTER);
 
         JPanel buttons = new JPanel();
@@ -56,11 +78,16 @@ public class ForgePanel extends JPanel {
         forgeBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(ingot>=1){
-                    //will forge after we implement that
-                    status.setText("The anvil isn't ready for forging right now.");
-                } else {
+                if(ingot>=1 && !isForging){
+                    forgeProgress = 0;
+                    canvasPanel.setForgeProgress(0);
+                    isForging = true;
+                    status.setText("Forging...");
+                    forgeTimer.start();
+                } else if (ingot<1){
                     status.setText("You do not have enough ingots to forge.");
+                } else {
+                    status.setText("You are already forging.");
                 }
             }
         });

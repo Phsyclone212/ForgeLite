@@ -22,7 +22,8 @@ public class CanvasPanel extends JPanel {
         g.setColor(Color.BLACK);
         g.drawRect(PAD, 50, barW, BAR_HEIGHT);
         g.setColor(Color.GREEN);
-        int xpFillW = (int)(barW * (xp / 100f));
+        int xpClamp = Math.max(0, Math.min(xp, 50));
+        int xpFillW = (int)(barW * (xpClamp / 50f));
         g.fillRect(PAD+1,51, xpFillW, BAR_HEIGHT-1);
 
     }

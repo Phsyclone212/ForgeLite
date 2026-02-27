@@ -1,5 +1,4 @@
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,6 +17,8 @@ public class ForgePanel extends JPanel {
     private boolean isForging = false;
     private int forgeProgress = 0;
 
+    private boolean hasWon = false;
+
     public ForgePanel() {
 
         forgeTimer = new Timer(50, e -> {
@@ -26,7 +27,7 @@ public class ForgePanel extends JPanel {
             //push to CanvasPanel
             canvasPanel.setForgeProgress(forgeProgress);
             //when progress >= 100 stop and complete
-            if(forgeProgress >= 100){
+            if(forgeProgress >= 100 && !hasWon){
                 forgeTimer.stop();
                 forgeProgress = 0;
                 canvasPanel.setForgeProgress(0);
@@ -35,6 +36,13 @@ public class ForgePanel extends JPanel {
                 canvasPanel.setXp(xp);
                 isForging = false;
                 status.setText("Sword complete! +10xp ");
+                if(xp>=50){
+                    hasWon = true;
+                    forgeBtn.setEnabled(false);
+                    mineBtn.setEnabled(false);
+                    smeltBtn.setEnabled(false);
+                    status.setText("You have forged enough swords, congrats!");
+                }
             }
         });
 
